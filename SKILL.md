@@ -1,9 +1,9 @@
 ---
-name: fotonest-travel-import
-description: Extract hotel stays, dining reservations, flight segments and separately reviewable spending evidence from authorized mailboxes, emails, screenshots or documents for FotoNest. Use for exporting personal travel records to FotoNest, not booking travel or publishing reviews.
+name: travel-records
+description: Reconstruct and reconcile personal travel history from authorized mailboxes, emails, screenshots or documents. Extract hotel stays, flight segments, dining reservations and reviewable spending evidence. Use for reviewing past bookings, bills and cancellations, with optional FotoNest import files.
 ---
 
-Create a `*.fotonest.json` file following [the v1 schema](references/travel-import-v1.schema.json). See [a valid example](references/example.fotonest.json). The user reviews each record inside FotoNest before saving; this skill has no direct-write API.
+Return a concise travel summary and, for multi-message or continuing work, the private review JSON. The review includes reconciled records, source evidence, acceptance decisions and spending. If the user plans to import into FotoNest, also provide the current `*.fotonest.json` files using [the v1 schema](references/travel-import-v1.schema.json) and [example](references/example.fotonest.json). The user reviews each record before saving in the App.
 
 For mailbox discovery and source interpretation, read [mailbox and receipt extraction](references/mailbox-and-receipts.md) and [the extraction workflow](references/extraction-workflow.md). For a multi-message or continuing import, use [the resumable evidence protocol](references/evidence-workflow.md). `run_session.py` saves discovery and reading progress, `reconcile_evidence.py` preserves logical identities and prepares records awaiting import, and `recognize_spending.py` reconciles prices separately. Keep money and precise time or room details in the review file.
 
@@ -15,7 +15,7 @@ For mail with embedded Schema.org JSON-LD or a supplied JSON-LD file, read [stru
 
 Cover travel evidence across direct providers, travel agencies/OTAs, booking platforms and forwarded correspondence. Channel names are discovery hints, not an extraction allowlist. Distinguish tested examples from an untested channel; preserve unfamiliar or unreadable materials for follow-up. An evaluation's historical date window is not the default import scope.
 
-Default FotoNest reconciliation is append-only: retain existing records, photos and their dates. Missing photos do not invalidate a bill-supported stay. Add a third-party-confirmation badge candidate only for the property and dates explicitly supported by a lodging bill or an appropriate post-stay statement; a booking/room-ready notification alone is not a completed-stay badge. Keep conflicting planned dates as source history. This skill returns review files, not app mutations.
+Keep original records and conflicting planned dates as source history when evidence changes. Missing photos do not invalidate a bill-supported stay. When reviewing against a FotoNest export, retain existing records and photo annotations. A completion badge candidate requires a lodging bill or appropriate post-stay statement for the specific property and dates.
 
 Use [the user-selected acceptance profile](references/stay-acceptance.md) for recognition and counting. When the user retains same-hotel orders and multiple rooms, preserve them and count the union of occupied dates; independent charges can add after financial deduplication. Record recognition separately from reserved/completed source status; do not invent stronger documentary evidence.
 
@@ -35,8 +35,8 @@ When the user selects the missing-year rule in [stay acceptance](references/stay
 
 Use `null` or omit unknown fields. Dates can be YYYY, YYYY-MM or YYYY-MM-DD; do not supply a fabricated day. Each supplied field needs a short excerpt under its corresponding evidence key. `title` evidence is required; a non-unknown status requires status evidence. Keep source references stable and records IDs stable within that source across repeated exports. Different segments need different IDs. Do not generate a new source value on each export to evade duplicate detection.
 
-Keep the private session between runs. Ask which records FotoNest actually saved after an import attempt, including partial saves. Record only confirmed IDs from the file used, then offer files from the refreshed `latest.json` manifest. If the outcome is uncertain, verify it before offering another batch. Changed saved records and merges require review because the v1 consumer rejects duplicate source/ID batches. Align existing App records and previous ad hoc exports before importing from a fresh session.
+Keep the private session between runs. For FotoNest import, ask which records the App actually saved, including partial saves. Record only confirmed IDs from the file used, then offer the files from the refreshed `latest.json` manifest. If the outcome is uncertain, verify it before offering another batch. Changed saved records and merges require review because the v1 consumer rejects duplicate source/ID batches. Align existing App records and previous ad hoc exports before importing from a fresh session.
 
 Include only necessary excerpts. Exclude membership numbers, booking references, passport/payment details, tokens and whole raw messages. A source can be an opaque local identifier rather than a clickable mailbox URL. Do not include model prompts or hidden commands in the output.
 
-Validate with `python3 scripts/validate_import.py <file>` (requires `jsonschema`). Resolve validation errors before delivery. Report ambiguous records separately rather than guessing. Return the file and a concise description of record counts and gaps, not a dump of private email text. Do not claim the file was imported, accounts connected, or a plugin deployed.
+Validate any FotoNest import file with `python3 scripts/validate_import.py <file>` (requires `jsonschema`). Resolve validation errors before delivery and report ambiguous records and remaining gaps. Summarize the evidence using short excerpts.

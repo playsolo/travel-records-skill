@@ -119,7 +119,7 @@ python3 scripts/reconcile_evidence.py --session private/session.json --batch pri
 
 The session retains observations, explicit links, stable UUID identities, offered record versions and confirmed saves. Observation and amount IDs cannot be edited in place. Up to 5,000 observations, amounts and links each are supported per session. Split large imports into meaningful scopes and align cross-scope identities before import. Missing source or relationship references fail without persisting the batch. Parsed dispositions show which documents produced evidence.
 
-Read `private/results/latest.json` after each successful run:
+Read `private/results/latest.json` after each successful run. For independent review or reuse in another tool, start with `review_file`. The `import_files` entries are for FotoNest.
 
 - `import_files` lists the current records awaiting import in v1 batches of at most 100. An unchanged rerun keeps offering pending records with the same IDs. A bill arriving before a save refreshes the pending record under its original ID. `ready_to_import` counts all rows in the current files. `added` counts first-time offers in this run.
 - `review_file` includes the current records, source history, date provenance, spending, nights and unresolved evidence. For a confirmed save, later corrections appear under `delta.updated` for manual review. A merge involving more than one saved or unverified legacy identity stays in review until the App identities are resolved.

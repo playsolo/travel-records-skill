@@ -1,6 +1,6 @@
-# FotoNest Travel Import
+# Travel Records
 
-A Skill for recovering travel records from authorized email and documents. It prepares hotel stays, flight segments and dining reservations for review, with a separate spending ledger.
+A Skill for rebuilding travel history from authorized email and documents. Review hotel stays, flight segments, dining reservations, source evidence and spending in local files. FotoNest import is an optional output.
 
 ## Try the demo
 
@@ -26,7 +26,11 @@ The cancellation remains in history. If a record was already saved, it appears a
 
 ## Use the Skill
 
-Point your agent at [SKILL.md](SKILL.md), or install the full repository folder as a skill named `fotonest-travel-import`. Your agent discovers and interprets material from the sources you authorize. The bundled scripts normalize mail, reconcile evidence, and produce [FotoNest v1 exports](references/travel-import-v1.schema.json) locally.
+Point your agent at [SKILL.md](SKILL.md), or install the full repository folder as a skill named `travel-records`. Your agent discovers and interprets material from the sources you authorize. The bundled scripts normalize mail and reconcile evidence locally.
+
+For example, ask: “Organize my hotel stays from these emails. Show the dates, unique nights, amounts and anything I need to verify.” The reconciliation manifest links to a review JSON with the travel records, spending by currency and source history. You can review it directly or ask your agent to map the reviewed fields to another tool's format.
+
+If you use FotoNest, the same workflow can also produce [FotoNest v1 import files](references/travel-import-v1.schema.json). The file-import entry is currently available in Debug builds.
 
 - [Mail and attachment workflow](references/extraction-workflow.md)
 - [Resume an import and confirm which records were saved](references/evidence-workflow.md)
@@ -36,5 +40,4 @@ Point your agent at [SKILL.md](SKILL.md), or install the full repository folder 
 
 - Verified on a limited real-mail sample covering Chinese Ctrip hotel statements and invoice PDFs, Fliggy hotel vouchers, one Ctrip message with an explicit Booking.com partner reference, and a two-room SLH confirmation. Two independent provider emails for the same Ctrip/Booking.com order were not available in that sample.
 - Schema.org JSON-LD is supported for a documented subset and was verified with synthetic hotel, flight and dining examples.
-- The FotoNest file-import entry is currently available in Debug builds. Review and export can be tried without the App.
 - Keep mailbox evidence, session files and import results outside the checkout. This repository ships synthetic examples.
