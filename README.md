@@ -45,6 +45,8 @@ The cancellation remains in history. If a record was already saved, it appears a
 
 ## Use the Skill
 
+[Gmail acceptance test (Chinese)](docs/gmail-acceptance.zh-CN.md)
+
 Point your agent at [SKILL.md](SKILL.md), or install the full repository folder as a skill named `travel-records`. Your agent discovers and interprets material from the sources you authorize. The bundled scripts normalize mail and reconcile evidence locally.
 
 The reconciliation manifest links to a review JSON with the travel records, spending by currency, and source history. You can review it directly or map the reviewed fields to another tool's format.

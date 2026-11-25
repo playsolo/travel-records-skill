@@ -31,6 +31,8 @@ npx skills add playsolo/travel-records-skill --skill travel-records --agent code
 
 ## 当前验证范围
 
+[用自己的 Gmail 验收](docs/gmail-acceptance.zh-CN.md)
+
 已用少量真实材料核对携程酒店水单和发票 PDF、飞猪酒店入住凭证、带 Booking.com 合作订单号的携程邮件，以及一封 SLH 双房确认邮件。真实样本覆盖有限。可选的 FotoNest v1 文件导入目前可在 Debug 构建中使用。
 
 [MIT 许可](LICENSE)允许使用、修改和分发，保留原版权和许可声明即可。
