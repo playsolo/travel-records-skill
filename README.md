@@ -1,6 +1,25 @@
 # Travel Records
 
-A Skill for rebuilding travel history from authorized email and documents. Review hotel stays, flight segments, dining reservations, source evidence and spending in local files. FotoNest import is an optional output.
+[简体中文](README_ZH.md) · [Download preview](https://github.com/playsolo/travel-records-skill/releases)
+
+Recover your travel history from old emails, hotel bills, and other documents. Review hotel stays, flight segments, dining reservations, spending, and the evidence behind each result. The review works on its own and can also produce a FotoNest import file.
+
+| Synthetic input | Reconciled result |
+| --- | --- |
+| Two independent bookings for the same hotel and two nights, plus one forwarded copy | Two bookings, two counted nights, USD 200 |
+| The final bill shows one room stayed for three nights, and the other room was cancelled | Three counted nights, USD 140, with the cancellation retained in history |
+
+## Install for Codex
+
+From the project where you want to use the skill, run:
+
+```bash
+npx skills add playsolo/travel-records-skill --skill travel-records --agent codex
+```
+
+The install command requires Node.js and npx. The local reconciliation scripts require Python 3.9 or newer and `jsonschema`. Start with a few emails or files and ask:
+
+> Use travel-records to organize these hotel bookings and bills. Show check-in and checkout dates, counted nights, amounts, and the source behind each result. Flag anything I should verify.
 
 ## Try the demo
 
@@ -28,7 +47,7 @@ The cancellation remains in history. If a record was already saved, it appears a
 
 Point your agent at [SKILL.md](SKILL.md), or install the full repository folder as a skill named `travel-records`. Your agent discovers and interprets material from the sources you authorize. The bundled scripts normalize mail and reconcile evidence locally.
 
-For example, ask: “Organize my hotel stays from these emails. Show the dates, unique nights, amounts and anything I need to verify.” The reconciliation manifest links to a review JSON with the travel records, spending by currency and source history. You can review it directly or ask your agent to map the reviewed fields to another tool's format.
+The reconciliation manifest links to a review JSON with the travel records, spending by currency, and source history. You can review it directly or map the reviewed fields to another tool's format.
 
 If you use FotoNest, the same workflow can also produce [FotoNest v1 import files](references/travel-import-v1.schema.json). The file-import entry is currently available in Debug builds.
 
@@ -41,3 +60,7 @@ If you use FotoNest, the same workflow can also produce [FotoNest v1 import file
 - Verified on a limited real-mail sample covering Chinese Ctrip hotel statements and invoice PDFs, Fliggy hotel vouchers, one Ctrip message with an explicit Booking.com partner reference, and a two-room SLH confirmation. Two independent provider emails for the same Ctrip/Booking.com order were not available in that sample.
 - Schema.org JSON-LD is supported for a documented subset and was verified with synthetic hotel, flight and dining examples.
 - Keep mailbox evidence, session files and import results outside the checkout. This repository ships synthetic examples.
+
+## License
+
+[MIT](LICENSE)
