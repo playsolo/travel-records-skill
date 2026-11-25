@@ -1,0 +1,21 @@
+{
+  "format": "fotonest.travel",
+  "version": 1,
+  "records": [
+    {
+      "id": "stay-1",
+      "source": "sample-hotel-email-1",
+      "kind": "hotel",
+      "title": "Park Hyatt Example City",
+      "start": "2024-06-06",
+      "end": "2024-06-08",
+      "status": "reserved",
+      "evidence": {
+        "title": "Park Hyatt Example City",
+        "start": "Check-In / Date: Thursday, 06-Jun-2024",
+        "end": "Checkout / Date: Saturday, 08-Jun-2024",
+        "status": "Reservation Confirmation"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "notice": "Synthetic evidence for local forward evaluation; no real accounts or reservations.",
+  "stages": [
+    [
+      {"id":"source-a","account":"mailbox-a","kind":"email_body","sent_at":"2024-01-01T10:00:00Z","subject":"Reservation confirmed — Example Bay Hotel","body":"Order DEMO-A is confirmed at Example Bay Hotel. Check in February 1, 2024; check out February 3, 2024. One room. Total price USD 100.00. Original booking time January 1, 2024 10:00 UTC."},
+      {"id":"source-b","account":"mailbox-a","kind":"email_body","sent_at":"2024-01-01T11:00:00Z","subject":"Second room confirmation — Example Bay Hotel","body":"Independent order DEMO-B is confirmed at Example Bay Hotel. Check in February 1, 2024; check out February 3, 2024. One room. Total price USD 100.00. Original booking time January 1, 2024 11:00 UTC. This is a separate order, not a copy of DEMO-A."},
+      {"id":"source-copy","account":"mailbox-b","kind":"email_body","sent_at":"2024-01-02T10:00:00Z","subject":"Forwarded copy of DEMO-A","body":"Forwarded original provider confirmation, sent January 1, 2024 10:00 UTC: Order DEMO-A is confirmed at Example Bay Hotel. Check in February 1, 2024; check out February 3, 2024. One room. Total price USD 100.00."}
+    ],
+    [
+      {"id":"source-bill","account":"mailbox-a","kind":"attachment","sent_at":"2024-02-04T10:00:00Z","subject":"Final folio for DEMO-A","body":"Example Bay Hotel. This final folio corresponds to order DEMO-A. Actual stay February 1–4, 2024. One room. Final lodging total USD 140.00. Payment USD 140.00. Balance USD 0.00. This folio replaces the original quoted total."},
+      {"id":"source-cancel","account":"mailbox-b","kind":"email_body","sent_at":"2024-01-15T10:00:00Z","subject":"DEMO-B cancelled","body":"Your separate order DEMO-B at Example Bay Hotel, February 1–3, 2024, has been cancelled. Cancellation charge USD 0.00. The other order DEMO-A is unaffected."}
+    ]
+  ]
+}

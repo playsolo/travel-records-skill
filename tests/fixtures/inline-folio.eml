@@ -1,0 +1,17 @@
+From: efolio@sample-hotel.invalid
+To: traveler@example.invalid
+Message-ID: <synthetic-folio-1@example.invalid>
+Subject: Thanks for staying!
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Summary of Your Stay
+Hotel: Maple Suites
+Guest: Morgan Example
+Dates of stay: Oct 11, 2014 - Oct 12, 2014
+Date        Description                  Charges     Credits
+10/02/14    Payment - Advance Deposit                176.32
+10/11/14    Room Charge                  152.00
+10/11/14    HST ROOM                     19.76
+10/11/14    Service Charge               4.56
+Total balance                                       0.00 CAD

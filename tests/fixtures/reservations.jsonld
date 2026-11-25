@@ -1,0 +1,38 @@
+{
+  "@context": "https://schema.org/",
+  "@graph": [
+    {
+      "@type": "LodgingReservation",
+      "reservationId": "DEMO-HOTEL",
+      "reservationStatus": "https://schema.org/ReservationConfirmed",
+      "reservationFor": { "@id": "#hotel" },
+      "checkinTime": "2024-02-01T15:00:00+08:00",
+      "checkoutTime": "2024-02-03T11:00:00+08:00",
+      "totalPrice": { "@type": "PriceSpecification", "price": 699.90, "priceCurrency": "CNY" },
+      "underName": { "@type": "Person", "name": "Synthetic traveler" },
+      "cancelReservationUrl": "https://example.invalid/private-action"
+    },
+    { "@id": "#hotel", "@type": "Hotel", "name": "示例海湾酒店" },
+    {
+      "@type": "FlightReservation",
+      "reservationNumber": "DEMO-FLIGHT",
+      "reservationStatus": "http://schema.org/Confirmed",
+      "reservationFor": {
+        "@type": "Flight",
+        "flightNumber": "101",
+        "airline": { "@type": "Airline", "name": "Example Airline" },
+        "departureAirport": { "@type": "Airport", "iataCode": "SFO" },
+        "arrivalAirport": { "@type": "Airport", "iataCode": "HND" },
+        "departureTime": "2024-02-06T21:00:00-08:00",
+        "arrivalTime": "2024-02-08T05:00:00+09:00"
+      }
+    },
+    {
+      "@type": "FoodEstablishmentReservation",
+      "reservationFor": { "@type": "Restaurant", "name": "示例餐厅" },
+      "startTime": "2024-02-03T19:00:00+08:00",
+      "partySize": "2",
+      "reservationStatus": { "@id": "https://schema.org/ReservationHold" }
+    }
+  ]
+}

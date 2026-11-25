@@ -1,0 +1,3 @@
+interface:
+  display_name: "FotoNest Travel Import"
+  short_description: "Extract bookings into reviewable FotoNest JSON files"

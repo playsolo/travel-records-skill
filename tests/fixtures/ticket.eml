@@ -1,0 +1,19 @@
+From: tickets@sample-airline.invalid
+To: traveler@example.invalid
+Message-ID: <synthetic-ticket-1@example.invalid>
+Subject: 出票成功确认
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Your purchase is now complete and your reservation has been electronically ticketed.
+Passenger Information: Morgan Example; Alex Example
+航班行程明细 Itinerary
+2021年09月12日
+ZH8471
+深圳宝安机场(SZX) null航站楼 21:00:00
+三亚凤凰机场(SYX) 22:40:00
+2021年09月15日
+ZH8472
+三亚凤凰机场(SYX) 18:00:00
+深圳宝安机场(SZX) 19:50:00
+Fare Details: Total CNY 1200.00 for two passengers and both segments.

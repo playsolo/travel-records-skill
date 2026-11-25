@@ -1,0 +1,14 @@
+From: reservations@sample-hotel.invalid
+To: traveler@example.invalid
+Message-ID: <synthetic-reservation-1@example.invalid>
+Subject: Reservation Confirmation for Cedar House
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Cedar House
+For Morgan Example
+CHECK-IN DATE: Saturday, April 25, 2015
+CHECK-OUT DATE: Sunday, April 26, 2015
+Your reservation is confirmed.
+Cancel your reservation
+If you cancel before April 24, 2015 there is no fee.
