@@ -180,6 +180,7 @@ def reconcile(session, batch, results=None):
         import_results(state, source, results)
     confirmed = state['confirmed_imports']
     legacy_unverified = state['legacy_exports'].keys() - set(state['legacy_not_saved_ids']) - confirmed.keys()
+    previous_observation_ids = {o['id'] for o in state['observations']}
     for key in ['observations', 'same_record', 'amounts']:
         incoming = batch.get(key, [])
         if not isinstance(incoming, list) or len(incoming) > 5000: raise ValueError('batch too large')
@@ -339,10 +340,17 @@ def reconcile(session, batch, results=None):
         else:
             unchanged.append(rid)
     # Updates remain pending proposals until the user handles the existing app row.
+    newly_observed_docs = {o['document_id'] for o in batch.get('observations', []) if o['id'] not in previous_observation_ids}
     for d in s['documents']:
         refs = sorted({current_assignments[o['id']] for o in obs.values() if o['document_id'] == d['id']})
         if refs and d['state'] not in ['duplicate', 'irrelevant']:
+            if d['state'] == 'needs_review':
+                retry = d.get('retry', {})
+                extraction_recovered = d['id'] in newly_observed_docs and (d.get('reason') == 'read_without_extraction' or (retry.get('active', True) and retry.get('action') == 'extract'))
+                if not extraction_recovered: continue
             run_session.mark_document(s, dict(document_id=d['id'], state='parsed', record_ids=refs))
+    state['processing_review'] = dict(record_ids=sorted({r['id'] for r in pending}),
+                                    financial_units=sorted({r['financial_unit'] for r in spending['pending']}))
     coverage = dict(format='fotonest.coverage.review', version=1, expected_document_ids=list(docs), documents=[])
     for d in s['documents']:
         entry = {k: d[k] for k in ['id', 'account', 'kind', 'state']}
@@ -356,7 +364,7 @@ def reconcile(session, batch, results=None):
                   delta=dict(added=added, updated=updated, unchanged=unchanged, pending=pending, merge_review=merges,
                              pending_import_ids=[r['id'] for r in exports], legacy_unverified_ids=sorted(legacy_unverified)),
                   acceptance=acceptance, spending=spending, coverage=coverage,
-                  coverage_summary=audit_coverage.audit(coverage), source_observations=state['observations'],
+                  coverage_summary=audit_coverage.audit(coverage), processing=run_session.processing_status(s), source_observations=state['observations'],
                   record_links=state['same_record'], amount_observations=state['amounts'],
                   app_modified=False, generated_does_not_mean_imported=True)
     return s, report, exports
@@ -381,6 +389,7 @@ def write_outputs(session_path, batch, output_dir, results=None):
         run_session.save_session(path, data); files.append(str(path.resolve()))
     review_path = folder / 'review.json'; run_session.save_session(review_path, review)
     manifest = dict(state='ready', import_files=files, review_file=str(review_path.resolve()),
+                    processing=review['processing'],
                     added=len(review['delta']['added']), ready_to_import=len(records),
                     legacy_unverified=len(review['delta']['legacy_unverified_ids']),
                     updates_for_review=len(review['delta']['updated']), app_modified=False)

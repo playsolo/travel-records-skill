@@ -29,6 +29,7 @@ python3 scripts/run_session.py record-page --session private/session.json --page
 python3 scripts/run_session.py next --session private/session.json --limit 20
 python3 scripts/run_session.py mark --session private/session.json --update private/read.json
 python3 scripts/run_session.py summary --session private/session.json
+python3 scripts/run_session.py assert-complete --session private/session.json
 ```
 
 `page.json` describes one actual connector page; `page_token` must explicitly be `null` for the first page. Never manufacture a completed cursor after hitting a read cap.
@@ -45,6 +46,29 @@ python3 scripts/run_session.py summary --session private/session.json
 ```
 
 Document IDs are unique across accounts; account-scope them yourself. Page replay is idempotent and cannot rewind a later cursor. `read.json` is `{"document_id":"body-a","state":"read"}`. Supported states: `needs_read`, `read`, `parsed`, `duplicate`, `irrelevant`, `needs_review`. Parsed needs `record_ids`; duplicate needs an existing `duplicate_of`; irrelevant/review need a concrete `reason`. Read without extraction remains pending. Reopening a terminal disposition requires `needs_review` and a reason. For screenshots/documents provided outside mail, inventory them with their corresponding kinds through the same page mechanism, using a descriptive query and no pagination.
+
+An inventoried item may include `"priority":"transaction"` when observed metadata identifies a transaction candidate; omit it for normal priority. This is an AI-supplied scheduling hint, not a keyword parser or extraction allowlist. Keep it stable on page replay. Existing v1 sessions without this field retain normal priority. `next` selects fresh read-but-unextracted materials first, then attachments, transaction-priority bodies, normal sources, and retryable failures. It never marks a source read or moves its cursor merely by returning it.
+
+Record an actual failed operation with `failure`, rather than repeatedly returning the same failed item at the front of the queue:
+
+```json
+{
+  "document_id": "folio-a", "failure_id": "opaque-attempt-1", "action": "read",
+  "reason": "connector transport closed", "retryable": true, "max_attempts": 3
+}
+```
+
+```bash
+python3 scripts/run_session.py failure --session private/session.json --update private/failure.json
+```
+
+Use a new opaque `failure_id` for each actual failed attempt and replay the same ID when retrying a checkpoint write whose outcome was uncertain. Identical replay does not consume another attempt or undo subsequent recovery, including after a later operation. `action` is `read`, `extract` or `review`; `max_attempts` bounds failed attempts for that operation (default 3), not the task's total reading budget. Record only a concise operational reason, not connector credentials or raw mail. Successful reads/extractions use the existing `mark`/reconciliation path. Explicit document dispositions deactivate the current retry while retaining failure history, so a later semantic review cannot revive an old read failure. No script invokes a connector, retries network calls or restarts the host.
+
+Retryable failures remain available after fresh work. Exhausted or non-retryable failures move out of `next.documents` into `blocked_documents`; semantic review items without an automatic next action appear in `review_documents`. Both lists are samples bounded by `--limit`; use `processing` counts and the saved session for the full queue. Inspect these items separately, seek additional evidence or report the blocker; do not discard them or loop forever on an unchanged error. Legacy `needs_review` reasons `unread_source` and `read_without_extraction` remain actionable. Other existing review reasons require explicit review rather than an invented retry history.
+
+`summary`, `next`, the reconciliation review and `latest.json` expose the same derived `processing` status: `not_started`, `partial`, `needs_review`, `blocked` or `complete`. Unfinished query pagination, accounts with no registered query, unread sources and outstanding extraction/retry actions prevent completion. Review items and exhausted failures cannot be counted as fully resolved. `assert-complete` reads the session without changing it and returns exit 0 only for `complete`, exit 2 for unfinished work and a nonzero error for invalid input. Even a successful empty search must be registered for each authorized account. This checks registered work only; it cannot prove the search strategy found every travel email or that fields are factually correct. Complete requested follow-up searches and independently review the evidence before calling the user-requested scope fully verified.
+
+Detected reconciliation conflicts and pending financial units also prevent completion, even when their source documents are already parsed. Reconciliation persists these review counts in the session so the CLI and manifest agree; new evidence can resolve them on the next reconciliation. Existing v1 reconciliation checkpoints without this derived summary require an empty-batch reconciliation to refresh it before completion can pass. Replaying old evidence alone does not clear an explicit document review; resolve it explicitly after checking the evidence. Proposed updates to existing App rows and unverified import receipts remain separate delivery concerns and do not require App mutation to finish extraction.
 
 ## AI extraction batch
 
