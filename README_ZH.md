@@ -29,6 +29,12 @@ npx skills add playsolo/travel-records-skill --skill travel-records --agent code
 
 使用自己的邮箱时，由 Agent 通过你授权的连接器读取指定范围。随附脚本在本地合并证据和核对金额。公开样例均为合成数据。
 
+## 在会话中通过链接使用
+
+先让 Agent 确认实际读到了完整 `SKILL.md` 及本次任务所需引用文件。GitHub 页面或 raw 文件读取失败时，可尝试[完整 ZIP](https://codeload.github.com/playsolo/travel-records-skill/zip/refs/heads/main)，或通过当前环境支持的文件方式提供完整目录，保留 `references/` 和 `scripts/`。提供链接不等于加载成功；仍读不到必需文件时，应停止技能提取并报告真实错误，不自行生成临时导入格式。
+
+长任务开始前，先确认私有输出目录可写、文件如何交付。工作区路径不等于下载链接；无法发布附件时，应保留进度并说明限制，小批结果可完整回贴文件内容。细节见[技能加载与文件交付](references/execution-and-delivery.md)。
+
 ## 当前验证范围
 
 [用自己的 Gmail 验收](docs/gmail-acceptance.zh-CN.md)

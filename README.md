@@ -49,6 +49,8 @@ The cancellation remains in history. If a record was already saved, it appears a
 
 Point your agent at [SKILL.md](SKILL.md), or install the full repository folder as a skill named `travel-records`. Your agent discovers and interprets material from the sources you authorize. The bundled scripts normalize mail and reconcile evidence locally.
 
+For a conversation using a repository link, first have the agent confirm it read the full entrypoint and the references needed for the task. If GitHub page/raw access fails, try the [complete ZIP](https://codeload.github.com/playsolo/travel-records-skill/zip/refs/heads/main), or supply the complete folder through the host's supported file mechanism. A link alone does not confirm loading. If the required files still cannot be read, stop the skill-based run and report the access error. Check a writable private output directory and the available file-delivery route before a long mailbox run; see [loading and delivery](references/execution-and-delivery.md).
+
 The reconciliation manifest links to a review JSON with the travel records, spending by currency, and source history. You can review it directly or map the reviewed fields to another tool's format.
 
 If you use FotoNest, the same workflow can also produce [FotoNest v1 import files](references/travel-import-v1.schema.json). The file-import entry is currently available in Debug builds.

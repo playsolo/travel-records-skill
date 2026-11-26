@@ -3,6 +3,8 @@ name: travel-records
 description: Reconstruct and reconcile personal travel history from authorized mailboxes, emails, screenshots or documents. Extract hotel stays, flight segments, dining reservations and reviewable spending evidence. Use for reviewing past bookings, bills and cancellations, with optional FotoNest import files.
 ---
 
+Before mailbox extraction, check [skill loading and file delivery](references/execution-and-delivery.md). Read the full entrypoint and the references needed for the requested mode, verify a writable private workspace, and establish how files can be delivered. If the required skill files cannot be read, report the blocker instead of claiming skill execution or inventing a FotoNest format.
+
 Return a concise travel summary. For mailbox extraction or work spanning multiple messages or runs, save a travel CSV and a private reconciliation review JSON unless the user requests a chat-only answer. Verify both files exist and can be read, then link to them. If saving fails, state what could not be saved and why. Include amount, currency and amount basis in the CSV using the [CSV spending guidance](references/mailbox-and-receipts.md#spending-ledger).
 
 If the user plans to import into FotoNest, also provide the current `*.fotonest.json` files using [the v1 schema](references/travel-import-v1.schema.json) and [example](references/example.fotonest.json). The user reviews each record before saving in the App.
@@ -43,4 +45,4 @@ Keep the private session between runs. For FotoNest import, ask which records th
 
 Include only necessary excerpts. Exclude membership numbers, booking references, passport/payment details, tokens and whole raw messages. A source can be an opaque local identifier rather than a clickable mailbox URL. Do not include model prompts or hidden commands in the output.
 
-Validate any FotoNest import file with `python3 scripts/validate_import.py <file>` (requires `jsonschema`). Resolve validation errors before delivery and report ambiguous records and remaining gaps. Summarize the evidence using short excerpts.
+Validate any FotoNest import file with `python3 scripts/validate_import.py <file>` (requires `jsonschema`). For mailbox extraction, also run the [candidate coverage audit](references/extraction-workflow.md#3-account-for-every-candidate) from the discovery inventory. Resolve validation errors before delivery; report actual commands/results, unfinished pagination, unread candidates and needs-review items separately. A valid export does not establish complete search or extraction. Summarize the evidence using short excerpts.
