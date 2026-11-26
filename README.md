@@ -9,6 +9,22 @@ Recover your travel history from old emails, hotel bills, and other documents. R
 | Two independent bookings for the same hotel and two nights, plus one forwarded copy | Two bookings, two counted nights, USD 200 |
 | The final bill shows one room stayed for three nights, and the other room was cancelled | Three counted nights, USD 140, with the cancellation retained in history |
 
+## Private desktop plugin prototype
+
+Developers can package the complete skill and its setup workflow without duplicating the extraction implementation:
+
+```bash
+python3 scripts/package_plugin.py --output /absolute/private/travel-plugin
+codex plugin marketplace add /absolute/private/travel-plugin
+codex plugin add travel-records@fotonest-travel-private
+```
+
+Use a new output directory outside the source. The generated marketplace includes the installable plugin and a ZIP; the source `plugin/` directory is a blueprint, not a complete installable bundle. After installation, open **Travel Records · 内测** in the desktop Plugins directory and run setup. Start a new chat to load its bundled skills; restart the app if the local listing has not refreshed.
+
+Setup reads the installed resources, verifies their hashes and checks a private workspace and Python dependencies. When permitted, it can prepare an isolated runtime in that workspace; it does not install globally or ask users for internal connection IDs. Gmail identity and file delivery are checked through the host. Installing the package does not grant mailbox authorization.
+
+This prototype is not published in the public directory. Web, mobile and unattended continuation remain unverified. Packaging does not supply a synchronous host adapter or guarantee runtime availability on every surface.
+
 ## Install for Codex
 
 From the project where you want to use the skill, run:

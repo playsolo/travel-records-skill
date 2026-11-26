@@ -13,6 +13,22 @@
 
 这组结果来自[可运行的合成样例](README.md#try-the-demo)，试跑无需连接邮箱或安装 FotoNest。
 
+## 私有插件原型（桌面）
+
+开发者可将完整 skill 和首次设置打成一个本地插件：
+
+```bash
+python3 scripts/package_plugin.py --output /absolute/private/travel-plugin
+codex plugin marketplace add /absolute/private/travel-plugin
+codex plugin add travel-records@fotonest-travel-private
+```
+
+输出目录必须是新目录，且位于源码之外。成品同时包含本地 marketplace 和插件 ZIP；`plugin/` 是打包蓝图，不能代替成品安装。已有核对脚本从同一份源码打包，不维护另一套提取实现。
+
+安装后在桌面 App 的插件目录找到 **Travel Records · 内测**，运行首次设置；新会话中可使用随包提供的技能。若 App 尚未刷新本地插件列表，重启后再检查。首次设置使用安装包内的资源，不通过数据分析 Python 临时下载 GitHub。它检查资源、私有工作区和 Python 依赖，再通过宿主核实已有 Gmail 账号及文件交付能力。必要时可在私有工作区准备隔离运行环境，失败时报告缺失能力；不要求用户修改全局 Python 或提供连接标识。
+
+这是私有桌面安装原型，未上架公共目录，也未验收网页、手机或无人值守续跑。安装本身不授权邮箱访问；正常使用仍需宿主提供已授权 Gmail 工具或用户提供资料。普通核对无需 FotoNest，导入需另外核实 App 支持。
+
 ## 安装到 Codex
 
 在你希望启用 Skill 的项目目录运行：

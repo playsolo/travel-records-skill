@@ -1,0 +1,26 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "travel-records",
+  "version": "0.1.0-private.1",
+  "description": "Recover and reconcile travel records from authorized mail and documents.",
+  "author": {"name": "FotoNest"},
+  "repository": "https://github.com/playsolo/travel-records-skill",
+  "license": "MIT",
+  "keywords": ["travel", "email", "receipts"],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/travel-records-setup/SKILL.md",
+      "interface": {
+        "displayName": "Travel Records · 内测",
+        "shortDescription": "从邮件和账单整理旅行记录",
+        "longDescription": "整理住宿、航班和餐饮记录，保留证据、金额和待复核事项。私有桌面安装原型；先运行首次设置核实环境和邮箱连接。",
+        "developerName": "FotoNest",
+        "category": "Productivity",
+        "capabilities": ["Read"],
+        "defaultPrompt": ["整理我 2026 年邮件中的旅行记录。", "继续上次的旅行记录核对。"],
+        "logo": "./assets/icon.svg",
+        "composerIcon": "./assets/icon.svg"
+      }
+    }
+  }
+}
