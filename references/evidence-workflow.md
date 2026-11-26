@@ -12,7 +12,7 @@ Create `config.json`:
 {
   "namespace": "personal-travel-project",
   "accounts": ["mailbox-a", "mailbox-b"],
-  "scope": {"description": "User-authorized source window and categories"},
+  "scope": {"description": "Annual analysis: mail dated in 2026", "email_years": [2026]},
   "profiles": {
     "stay_policy": "bill_priority_retain_same_property_orders",
     "spending_policy": "adopt_booking_price_without_contrary_evidence_bill_first",
@@ -22,6 +22,10 @@ Create `config.json`:
 ```
 
 The quoted-price profile is optional and represents the user's selected rule, not proof of payment. Omit it or use `documented_only` when unselected. `traveler_scope` expresses which orders the user wants compared, without requiring occupant investigation. Without it, unknown traveler relations do not prove a conflict. Missing-year completion is performed by the AI only when authorized: fill a missing hotel year from the original provider mail year, and retain `date_basis`; explicit dates and quoted original mail dates take precedence over forwarding dates.
+
+`scope.email_years` limits the source mail years for annual work, not the dates of extracted trips. Every query/page in such a session must declare `email_years` within that list and actually use those bounds at the connector. These declarations are not a query parser: the host must verify the actual search and message dates. Each account/year needs a registered search, including an empty result. Existing sessions without this optional scope field keep their previous non-annual protocol.
+
+When the user explicitly adds analysis years, stop any running controller and run `run_session.py extend-years --session private/session.json --update private/years.json`, where the file is `{"email_years":[2025,2026]}`. This only permits an additive extension of an existing annual scope. Keep all evidence, namespace and record IDs. Newly added years become unsearched work; new observations can update dates/status/amounts through normal reconciliation. No automatic year expansion occurs because a bill is missing.
 
 ```bash
 python3 scripts/run_session.py init --session private/session.json --config private/config.json
@@ -37,6 +41,7 @@ python3 scripts/run_session.py assert-complete --session private/session.json
 ```json
 {
   "account": "mailbox-a", "query_id": "hotel-window-1", "query": "authorized query",
+  "email_years": [2026],
   "page_token": null, "next_page_token": "opaque-next-page",
   "items": [
     {"id": "body-a", "kind": "email_body", "source_id": "opaque-provider-message"},

@@ -17,6 +17,22 @@ def nonempty(value):
     return isinstance(value, str) and bool(value.strip())
 
 
+def email_years(value):
+    if not isinstance(value, list) or not value or not all(type(y) is int and 1000 <= y <= 9998 for y in value) or len(set(value)) != len(value):
+        raise ValueError('invalid email years')
+    return sorted(value)
+
+
+def extend_years(s, update):
+    """Explicitly authorized additive mail scope; never reset evidence identity."""
+    if not isinstance(update, dict) or set(update) != {'email_years'}:
+        raise ValueError('invalid scope expansion')
+    years = email_years(update['email_years'])
+    old = email_years(s['scope']['email_years'])
+    if not set(old) <= set(years): raise ValueError('cannot shrink email scope')
+    s['scope']['email_years'] = years
+
+
 def load_session(path):
     with open(path, encoding='utf-8') as f:
         s = json.load(f)
@@ -26,6 +42,7 @@ def load_session(path):
         raise ValueError('invalid session accounts')
     if not all(isinstance(s.get(k), dict) for k in ['scope', 'profiles']) or not all(isinstance(s.get(k), list) for k in ['queries', 'documents']):
         raise ValueError('invalid session data')
+    if 'email_years' in s['scope']: email_years(s['scope']['email_years'])
     return s
 
 
@@ -68,10 +85,16 @@ def record_page(s, page):
     if (token is not None and not nonempty(token)) or (nxt is not None and not nonempty(nxt)):
         raise ValueError('invalid token')
     account, qid = page['account'], page['query_id']
+    years = email_years(page['email_years']) if 'email_years' in page else None
+    authorized_years = s['scope'].get('email_years')
+    if authorized_years is not None and (years is None or not set(years) <= set(email_years(authorized_years))):
+        raise ValueError('query exceeds or omits email year scope')
     queries = [q for q in s['queries'] if q['account'] == account and q['query_id'] == qid]
     if len(queries) > 1: raise ValueError('duplicate query')
     q = queries[0] if queries else dict(account=account, query_id=qid, query=page['query'], next_page_token=None, complete=False, pages=[])
     if q['query'] != page['query']: raise ValueError('query mismatch')
+    if queries and q.get('email_years') != years: raise ValueError('query email scope mismatch')
+    if years is not None: q['email_years'] = years
     old = next((p for p in q['pages'] if p['page_token'] == token), None)
     # A page's cursor and inventory must remain stable when replayed.
     items = page['items']; ids = [x.get('id') for x in items if isinstance(x, dict)]
@@ -187,13 +210,17 @@ def processing_status(s):
         raise ValueError('invalid document inventory')
     unfinished = []
     searched = set()
+    searched_years = set()
     for q in s['queries']:
         if q.get('account') not in s['accounts'] or not nonempty(q.get('query_id')) or type(q.get('complete')) is not bool:
             raise ValueError('invalid query state')
         searched.add(q['account'])
+        for year in email_years(q['email_years']) if 'email_years' in q else []:
+            searched_years.add((q['account'], year))
         if not q['complete'] or q.get('next_page_token') is not None:
             unfinished.append(dict(account=q['account'], query_id=q['query_id'], next_page_token=q.get('next_page_token')))
     unsearched = [a for a in s['accounts'] if a not in searched]
+    missing_years = [dict(account=a, year=y) for a in s['accounts'] for y in email_years(s['scope']['email_years']) if (a, y) not in searched_years] if 'email_years' in s['scope'] else []
     actions = sum(pending_action(d) is not None for d in docs)
     review = [d for d in docs if d['state'] == 'needs_review' and pending_action(d) is None]
     blocked = sum(d.get('retry') is not None and d['retry'].get('active', True) for d in review)
@@ -208,13 +235,14 @@ def processing_status(s):
     financial_reviews = len(recorded_review['financial_units']) if recorded_review is not None else 0
     unresolved = len(review) + record_reviews + financial_reviews + int(review_unknown)
     status = ('not_started' if not docs and not s['queries'] else
-              'partial' if actions or unfinished or unsearched else
+              'partial' if actions or unfinished or unsearched or missing_years else
               'blocked' if blocked else 'needs_review' if unresolved else 'complete')
     return dict(status=status, can_claim_complete=status == 'complete', remaining_actions=actions,
                 unresolved_review=unresolved, unresolved_documents=len(review), blocked_documents=blocked,
                 unresolved_records=record_reviews, unresolved_financial_units=financial_reviews,
                 reconciliation_review_required=review_unknown,
                 unfinished_queries=unfinished, unsearched_accounts=unsearched,
+                unsearched_email_years=missing_years,
                 scope='registered_queries_and_documents', mailbox_coverage_proven=False)
 
 
@@ -248,7 +276,7 @@ def summary(s):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__); sub=parser.add_subparsers(dest='command',required=True)
-    for name,arg in [('init','config'),('record-page','page'),('mark','update'),('failure','update'),('next',None),('summary',None),('assert-complete',None)]:
+    for name,arg in [('init','config'),('record-page','page'),('mark','update'),('failure','update'),('extend-years','update'),('next',None),('summary',None),('assert-complete',None)]:
         p=sub.add_parser(name); p.add_argument('--session',required=True)
         if arg: p.add_argument('--'+arg,required=True,help='JSON input file')
         if name=='next': p.add_argument('--limit',type=int,default=20)
@@ -259,9 +287,12 @@ def main():
             s=init(a.session,config); result=summary(s)
         else:
             s=load_session(a.session)
-            if a.command in ['record-page','mark','failure']:
+            if a.command in ['record-page','mark','failure','extend-years']:
                 with open(getattr(a,'page' if a.command=='record-page' else 'update'),encoding='utf-8') as f: data=json.load(f)
-                {'record-page':record_page, 'mark':mark_document, 'failure':record_failure}[a.command](s,data); save_session(a.session,s); result=summary(s)
+                session_file = Path(a.session).resolve()
+                if a.command == 'extend-years' and session_file.with_name(session_file.name + '.supervisor.lock').exists():
+                    raise ValueError('stop the controller before expanding scope')
+                {'record-page':record_page, 'mark':mark_document, 'failure':record_failure, 'extend-years':extend_years}[a.command](s,data); save_session(a.session,s); result=summary(s)
             elif a.command=='next':
                 result=next_documents(s,a.limit)
             elif a.command=='assert-complete': result=processing_status(s)

@@ -14,6 +14,8 @@ Search both event words and provider domains. A subject-only search misses recei
 
 These are discovery hints, not an allowlist or proof that a message is authentic or relevant. Inspect actual senders and bodies, include hotel-specific domains when observed, paginate every query, and report the inspected scope. Do not exclude promotions by default: transactional messages can be misclassified. Do not claim a complete mailbox scan merely because all keyword result pages were exhausted.
 
+For annual analysis, apply the requested mail-year bounds to every discovery and follow-up query, including exact-order searches. For example, a 2026 Gmail query keeps `after:2026/01/01 before:2027/01/01` along with its search terms; use the connector's date semantics and report them. Do not search 2025 mail simply because it could contain a 2026 reservation. Trip dates are separate extracted facts. Prefer message-scoped reads; if a connector expands a thread, exclude other-year messages and their attachments from this run. A quote inside an in-scope message remains part of that message, with its original date context preserved.
+
 ## Booking channels and unfamiliar templates
 
 Use a shared evidence model across hotel/airline direct bookings, OTAs (including Ctrip/Trip.com and Fliggy), restaurant booking services, travel agents and manual correspondence. Adapt discovery terms and reading of a new layout without requiring a new brand-specific parser. Search the user's requested scope; a 2014–2019 evaluation does not cover 2023–2024 examples. Mail may arrive months after the trip, so do not confuse mail-date filtering with experience-date coverage.
