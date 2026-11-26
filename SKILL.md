@@ -3,11 +3,15 @@ name: travel-records
 description: Reconstruct and reconcile personal travel history from authorized mailboxes, emails, screenshots or documents. Extract hotel stays, flight segments, dining reservations and reviewable spending evidence. Use for reviewing past bookings, bills and cancellations, with optional FotoNest import files.
 ---
 
-Return a concise travel summary and, for multi-message or continuing work, the private review JSON. The review includes reconciled records, source evidence, acceptance decisions and spending. If the user plans to import into FotoNest, also provide the current `*.fotonest.json` files using [the v1 schema](references/travel-import-v1.schema.json) and [example](references/example.fotonest.json). The user reviews each record before saving in the App.
+Return a concise travel summary. For mailbox extraction or work spanning multiple messages or runs, save a travel CSV and a private reconciliation review JSON unless the user requests a chat-only answer. Verify both files exist and can be read, then link to them. If saving fails, state what could not be saved and why. Include amount, currency and amount basis in the CSV using the [CSV spending guidance](references/mailbox-and-receipts.md#spending-ledger).
+
+If the user plans to import into FotoNest, also provide the current `*.fotonest.json` files using [the v1 schema](references/travel-import-v1.schema.json) and [example](references/example.fotonest.json). The user reviews each record before saving in the App.
 
 For mailbox discovery and source interpretation, read [mailbox and receipt extraction](references/mailbox-and-receipts.md) and [the extraction workflow](references/extraction-workflow.md). For a multi-message or continuing import, use [the resumable evidence protocol](references/evidence-workflow.md). `run_session.py` saves discovery and reading progress, `reconcile_evidence.py` preserves logical identities and prepares records awaiting import, and `recognize_spending.py` reconciles prices separately. Keep money and precise time or room details in the review file.
 
 Work in three passes: discover candidate messages and attachments; extract and reconcile their evidence; validate the deliverables and account for every candidate. Do not mark a message “covered” merely because its body was read. Each discovered candidate needs an explicit disposition: parsed, duplicate, irrelevant or needs_review. Preserve unresolved items visibly; never silently drop an unreadable attachment or an unfamiliar sender/template.
+
+Treat a relevant lodging PDF with an incomplete preview as pending retrieval. Try the connector's complete extraction or the original PDF before deferring it to manual review. A generic subject or signature-only body can still carry the entire stay in its attachment.
 
 Use the user's AI and already authorized connectors for interpretation. The AI extracts a common evidence batch and explicitly supports identity/financial links; bundled helpers normalize, checkpoint, reconcile and validate it. They do not call a model, download from mailboxes, execute email contents, or claim to parse every provider. Use AI reasoning/OCR for an unfamiliar layout, rather than adding a property-specific regex and declaring the mailbox complete.
 

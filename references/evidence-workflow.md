@@ -121,6 +121,8 @@ The session retains observations, explicit links, stable UUID identities, offere
 
 Read `private/results/latest.json` after each successful run. For independent review or reuse in another tool, start with `review_file`. The `import_files` entries are for FotoNest.
 
+For delivery, use the actual saved `review_file` and write the travel CSV from that same review. Use the user's requested destination or a private workspace output directory outside version control. Reopen the JSON and CSV, check that the CSV covers the intended records and recognized amounts, and give the user links to the files. A progress update can show a preview in chat. When delivering partial results, label the files with the scope already checked and preserve the checkpoint for continuation.
+
 - `import_files` lists the current records awaiting import in v1 batches of at most 100. An unchanged rerun keeps offering pending records with the same IDs. A bill arriving before a save refreshes the pending record under its original ID. `ready_to_import` counts all rows in the current files. `added` counts first-time offers in this run.
 - `review_file` includes the current records, source history, date provenance, spending, nights and unresolved evidence. For a confirmed save, later corrections appear under `delta.updated` for manual review. A merge involving more than one saved or unverified legacy identity stays in review until the App identities are resolved.
 - Processing/unknown states, conflicting fields and unsupported v1 date ranges are held. Existing planned history remains in the session. App v1 cannot represent timezones/precise local times or reversed local-date ranges across the date line; those stay in review.

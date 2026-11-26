@@ -5,8 +5,8 @@ Search both event words and provider domains. A subject-only search misses recei
 ```text
 {from:hilton.com from:feedback.hilton.com}
 {from:accor.com from:accor-mail.com from:accorhotels.com}
-{receipt folio invoice bill factura recibo Rechnung 账单 收据 发票} {hotel resort Marriott Hilton Hyatt Accor 酒店}
-{reservation confirmation booking itinerary check-in checking 入住 预订 退房}
+{receipt folio invoice bill factura recibo Rechnung 账单 帳單 水单 收据 收據 发票 發票} {hotel resort Marriott Hilton Hyatt Accor 酒店 飯店}
+{reservation confirmation booking itinerary check-in checking 入住 预订 預訂 訂房 退房}
 {subject:"出票成功确认" subject:"出票成功" subject:"出票通知" subject:"购票成功" subject:"电子客票"}
 {from:trip.com from:ctrip.com} {水单 电子发票 机票 行程确认单 预订}
 {from:ur.alitrip.com from:notice.alitrip.com} {入住凭证 行程确认单 航变 交易确认}
@@ -36,6 +36,8 @@ These are tested layout lessons, not a claim that every order type, revision or 
 
 Staff-sent bills may have only the property name as the subject (for example, “JW Marriott Cusco”), with “bill” or “folio” only in the body and PDFs attached. For an identified property, search its name and observed hotel sender/domain with `has:attachment`, then read the actual bill. Keep lodging and incidentals folios associated with one stay; two attachments are not two stays. A return stay mentioned in an email can have a later, separate folio. Identify the bill currency separately from a header's quoted nightly-rate currency, and do not claim paid/settled when credit is zero and balance remains positive.
 
+A guest-service email titled only “账单” or “帳單” can contain a signature shared by several hotels. Keep its PDF in the inventory and use the property printed on the folio, including a logo header when necessary. Record the labeled arrival and departure dates, and use the charge total rather than the payment or balance. If a reservation in another authorized mailbox names the same property and dates but has a different confirmation number, preserve it as a possible relationship until the correspondence is established.
+
 eFolio can be an inline plain-text bill with no attachment. Include observed senders such as `efolio@fairfieldinn.com`, “billing summary”, “Accommodation invoice” and “Thanks for staying” when discovering hotel receipts. Extract “Dates of stay” separately from mail timestamps. Preserve voucher payments, card payments, rebates and balance as distinct components; a service charge followed by an equal rebate is not net consumption. In mixed HTML/plaintext bodies, ignore `<meta>` booking-date attributes when they conflict with or obstruct the visible labeled stay dates. OCR can separate entire label and value columns: verify their layout or use explicitly stated invoice dates rather than pairing adjacent text blindly.
 
 Domestic flight orders can have the subject “出票成功确认” without “机票”, “航班”, “reservation” or “itinerary”. Include localized ticket-issuance subjects and observed airline sender domains. Air China orders can contain Shenzhen Airlines (`ZH`) or other carriers: read the flight table instead of deriving the carrier from the sender. Ignore literal `null` terminal placeholders. Capture an order's total once and associate it with its segments; do not charge each segment the whole order amount. A ticket-issuance email confirms ticketing, not actual boarding.
@@ -62,6 +64,10 @@ Give each mailbox a stable opaque namespace. New record source identities should
 ## Spending ledger
 
 The current `fotonest.travel` v1 schema has no money fields. Preserve it. Return a separate `*.expenses.review.json` ledger under [the review-ledger schema](expenses-review.schema.json), plus CSV when useful; do not claim the app imports money until its consumer supports that contract. Validate with `python3 scripts/validate_expenses.py FILE` (requires jsonschema).
+
+For a travel CSV, join `spending.recognized` in the reconciliation review to travel rows using `record_ids`. Include numeric amount, ISO currency and a readable basis such as final bill, documented payment or accepted booking quote. Leave amount and currency blank when no amount is recognized, including pending evidence. Use zero only when the recognized amount is explicitly zero.
+
+Count each financial unit once. If one payment covers several travel rows, put it on one associated row and identify the shared scope so other rows do not repeat it. Use separate currency columns or a linked spending detail CSV when a single row has recognized amounts in multiple currencies. Check the CSV sums by currency against the recognized amounts in the exported scope.
 
 Record decimal amounts as strings, explicit ISO currency or null, amount type, stable source/material IDs and a short supporting excerpt. Separate bill_total, invoice_total, payment_entry, balance, deposit_entry, refund_entry and credit_total. A credit total can include transfers or adjustments rather than cash payment. Balance zero is not zero cost. Preserve unknown currency for ambiguous `$`/`¥`; never infer currency solely from a hotel's country. Keep loyalty points separate from money; do not convert them to currency.
 
