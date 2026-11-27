@@ -1,0 +1,20 @@
+{
+  "name": "fotonest-travel",
+  "interface": {
+    "displayName": "fotonest-travel"
+  },
+  "plugins": [
+    {
+      "name": "travel-records",
+      "source": {
+        "source": "local",
+        "path": "./plugins/travel-records"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

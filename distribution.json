@@ -1,0 +1,10 @@
+{
+  "format": "travel-records.git-distribution",
+  "version": 1,
+  "source_repository": "https://github.com/playsolo/travel-records-skill",
+  "source_revision": "1291b48a37f7adc67c96af9feccd05993fef8599",
+  "generator": "scripts/package_plugin.py --marketplace-name fotonest-travel",
+  "plugin_version": "0.1.0-preview.1",
+  "generated_at": "2026-11-27",
+  "public_directory_published": false
+}

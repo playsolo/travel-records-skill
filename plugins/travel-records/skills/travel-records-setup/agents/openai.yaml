@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Records 首次设置"
+  short_description: "Check installed resources, runtime and authorized travel sources"
+  default_prompt: "请用 $travel-records-setup 检查环境和已授权的 Gmail，再开始旅行记录核对。"
