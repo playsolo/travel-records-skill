@@ -1,25 +1,39 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "travel-records",
-  "version": "0.1.0-private.1",
+  "version": "0.1.0-preview.1",
   "description": "Recover and reconcile travel records from authorized mail and documents.",
   "author": {"name": "FotoNest"},
+  "homepage": "https://github.com/playsolo/travel-records-skill",
   "repository": "https://github.com/playsolo/travel-records-skill",
   "license": "MIT",
   "keywords": ["travel", "email", "receipts"],
   "extensions": {
     "com.openai": {
+      "requires_local_executor": true,
       "onboardingSkill": "./skills/travel-records-setup/SKILL.md",
       "interface": {
-        "displayName": "Travel Records · 内测",
-        "shortDescription": "从邮件和账单整理旅行记录",
-        "longDescription": "整理住宿、航班和餐饮记录，保留证据、金额和待复核事项。私有桌面安装原型；先运行首次设置核实环境和邮箱连接。",
+        "displayName": "Travel Records",
+        "shortDescription": "Review travel mail and bills",
+        "longDescription": "Reconstruct hotel stays, flight segments and dining reservations from authorized mail and documents. Review dates, status, spending and source evidence; keep cancellations and unresolved items visible. Desktop preview requiring local Python 3.9+ execution, a writable private workspace and jsonschema; setup checks resources and can prepare an isolated dependency environment. Gmail access requires a separately authorized host connector; supplied documents also work. Annual requests inspect only mail sent in the requested years. Real-mail evaluation is limited and mainly covers hotels. Web, mobile and unattended continuation are unverified. Review CSV and JSON independently; optional FotoNest v1 import currently requires a Debug build.",
         "developerName": "FotoNest",
         "category": "Productivity",
         "capabilities": ["Read"],
+        "websiteURL": "https://github.com/playsolo/travel-records-skill",
+        "supportURL": "https://github.com/playsolo/travel-records-skill/issues",
+        "privacyPolicyURL": "https://github.com/playsolo/travel-records-skill/blob/main/docs/privacy.md",
         "defaultPrompt": ["整理我 2026 年邮件中的旅行记录。", "继续上次的旅行记录核对。"],
         "logo": "./assets/icon.svg",
         "composerIcon": "./assets/icon.svg"
+      },
+      "publication": {
+        "release_notes": "Initial desktop preview submission package with bundled travel reconciliation skills, setup checks and source-backed review outputs. Public directory availability depends on review and publication.",
+        "translations": {
+          "zh-CN": {
+            "subtitle": "从邮件和账单整理旅行记录",
+            "description": "从已授权邮箱和资料整理住宿、航班及餐饮预订，核对日期、状态、金额和来源，保留取消与待复核项。桌面预览版依赖本地 Python 3.9+、可写私有工作区和 jsonschema，首次设置会检查环境并可准备隔离依赖。Gmail 需通过宿主单独授权，也可提供少量文件。年度请求仅检查指定年份发送的邮件。真实验证范围有限，以酒店材料为主；网页、手机及无人值守续跑尚未验收。CSV 和核对 JSON 可独立使用；可选 FotoNest v1 导入当前需要 Debug 构建。"
+          }
+        }
       }
     }
   }

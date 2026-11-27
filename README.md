@@ -11,6 +11,8 @@ Recover your travel history from old emails, hotel bills, and other documents. R
 
 ## Private desktop plugin prototype
 
+The public-directory submission candidate is `0.1.0-preview.1`. It is not listed: the portal currently requires developer identity verification before upload. See [submission status and steps](docs/plugin-publication.md) and [privacy](docs/privacy.md).
+
 Developers can package the complete skill and its setup workflow without duplicating the extraction implementation:
 
 ```bash
@@ -19,7 +21,7 @@ codex plugin marketplace add /absolute/private/travel-plugin
 codex plugin add travel-records@fotonest-travel-private
 ```
 
-Use a new output directory outside the source. The generated marketplace includes the installable plugin and a ZIP; the source `plugin/` directory is a blueprint, not a complete installable bundle. After installation, open **Travel Records · 内测** in the desktop Plugins directory and run setup. Start a new chat to load its bundled skills; restart the app if the local listing has not refreshed.
+Use a new output directory outside the source. The generated marketplace includes the installable plugin and a ZIP; the source `plugin/` directory is a blueprint, not a complete installable bundle. After installation, open **Travel Records** in the desktop Plugins directory and run setup. Start a new chat to load its bundled skills; restart the app if the local listing has not refreshed.
 
 Setup reads the installed resources, verifies their hashes and checks a private workspace and Python dependencies. When permitted, it can prepare an isolated runtime in that workspace; it does not install globally or ask users for internal connection IDs. Gmail identity and file delivery are checked through the host. Installing the package does not grant mailbox authorization.
 
@@ -76,6 +78,8 @@ If you use FotoNest, the same workflow can also produce [FotoNest v1 import file
 - [Booking channels and receipts](references/mailbox-and-receipts.md)
 
 ## Public preview
+
+[Desktop beta introduction, synthetic sample and promotion kit](marketing/README.md)
 
 - Verified on a limited real-mail sample covering Chinese Ctrip hotel statements and invoice PDFs, Fliggy hotel vouchers, one Ctrip message with an explicit Booking.com partner reference, and a two-room SLH confirmation. Two independent provider emails for the same Ctrip/Booking.com order were not available in that sample.
 - Schema.org JSON-LD is supported for a documented subset and was verified with synthetic hotel, flight and dining examples.
