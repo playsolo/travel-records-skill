@@ -9,9 +9,32 @@ Recover your travel history from old emails, hotel bills, and other documents. R
 | Two independent bookings for the same hotel and two nights, plus one forwarded copy | Two bookings, two counted nights, USD 200 |
 | The final bill shows one room stayed for three nights, and the other room was cancelled | Three counted nights, USD 140, with the cancellation retained in history |
 
-## Private desktop plugin prototype
+## Install the desktop plugin from GitHub
+
+For desktop clients supporting Git-backed plugin marketplaces, the [`desktop-plugin` branch](https://github.com/playsolo/travel-records-skill/tree/desktop-plugin) contains the complete installable package. Users do not need to package the source. This is separate from OpenAI's public directory.
+
+In **Add plugin marketplace**, enter:
+
+- Source: `https://github.com/playsolo/travel-records-skill.git`
+- Git ref: `desktop-plugin`
+- Sparse paths: leave blank
+
+Choose the **fotonest-travel** source and install **Travel Records**. If your client has no such entry but a plugin-capable `codex` command is available:
+
+```bash
+codex plugin marketplace add playsolo/travel-records-skill --ref desktop-plugin
+codex plugin add travel-records@fotonest-travel
+```
+
+Run setup, authorize Gmail separately, and start a new chat with a known trip. Local Python 3.9+, a writable private workspace and `jsonschema` are required; setup checks these and can prepare isolated dependencies. Use a locally executing desktop environment. Web, mobile and unattended continuation remain unverified. Client or organization policy may restrict custom marketplaces.
+
+To refresh the catalog, run `codex plugin marketplace upgrade fotonest-travel`, then check and install available plugin updates in the client. Users of the older private marketplace should select the new **fotonest-travel** source.
+
+## Developer packaging
 
 The public-directory submission candidate is `0.1.0-preview.1`. It is not listed: the portal currently requires developer identity verification before upload. See [submission status and steps](docs/plugin-publication.md) and [privacy](docs/privacy.md).
+
+For Git distribution, use the same packager with `--marketplace-name fotonest-travel` and publish only its generated `.agents/` and `plugins/` directories on the distribution branch. Regenerate that branch from the canonical source; do not edit a second copy of the skill or helpers there.
 
 Developers can package the complete skill and its setup workflow without duplicating the extraction implementation:
 

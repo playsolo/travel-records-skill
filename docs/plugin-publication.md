@@ -4,6 +4,8 @@
 
 `0.1.0-preview.1` 是面向公共插件目录的桌面提交候选包，不代表已上架。2026-11-27 在实际发布后台点击上传后，平台要求先完成开发者身份验证，因而尚未上传、提交审核或发布。
 
+发布者反馈验证提示地区或证件不受支持。先通过 GitHub 的 `desktop-plugin` 分支分发完整桌面产物，安装方法见[中文 README](../README_ZH.md#安装桌面插件github-分发)。Git 市场支持与公共目录审核是不同的分发机制；客户端和组织策略仍适用。
+
 技能需要本地程序执行，在 `plugin/plugin.json` 的 `extensions.com.openai.requires_local_executor` 声明为 `true`。包中不含 MCP 服务、其他 app 引用或生命周期 hooks。邮箱使用宿主另行授权的连接器，不创建新的 Gmail 中转服务。
 
 ## 提交流程
@@ -20,6 +22,8 @@
 ## English
 
 `0.1.0-preview.1` is a desktop directory submission candidate, not a published listing. On 2026-11-27, the actual portal blocked upload pending developer identity verification. No upload, review submission or directory publication was completed.
+
+The publisher reports unsupported region or identity documents. Complete desktop artifacts are instead distributed through the GitHub `desktop-plugin` branch; see the [installation instructions](../README.md#install-the-desktop-plugin-from-github). Git marketplaces are separate from public directory approval and remain subject to client and organization policy.
 
 The manifest declares `extensions.com.openai.requires_local_executor: true`. There is no MCP server, app-reference configuration or lifecycle hook. Mail access uses the host's separately authorized connector.
 

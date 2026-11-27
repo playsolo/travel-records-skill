@@ -13,9 +13,32 @@
 
 这组结果来自[可运行的合成样例](README.md#try-the-demo)，试跑无需连接邮箱或安装 FotoNest。
 
-## 私有插件原型（桌面）
+## 安装桌面插件（GitHub 分发）
+
+面向支持 Git 插件市场的桌面客户端。完整安装产物位于 [`desktop-plugin` 分支](https://github.com/playsolo/travel-records-skill/tree/desktop-plugin)，无需自行打包。它不是 OpenAI 公共目录上架版本。
+
+在客户端的 **Add plugin marketplace** 中填写：
+
+- Source：`https://github.com/playsolo/travel-records-skill.git`
+- Git ref：`desktop-plugin`
+- Sparse paths：留空
+
+添加后选择 **fotonest-travel** 来源并安装 **Travel Records**。若客户端没有此入口，但已有支持插件的 `codex` 命令，可运行：
+
+```bash
+codex plugin marketplace add playsolo/travel-records-skill --ref desktop-plugin
+codex plugin add travel-records@fotonest-travel
+```
+
+随后运行首次设置、单独授权 Gmail，并在新会话中先核对一段已知行程。需要 Python 3.9+、可写私有工作区和 `jsonschema`；首次设置会检查环境并可准备隔离依赖。只在支持本地执行的桌面环境使用，网页、手机和无人值守续跑尚未验收。客户端或组织策略可能限制添加市场。
+
+更新可运行 `codex plugin marketplace upgrade fotonest-travel`，再在客户端检查并安装可用的插件更新；添加过旧私有市场的用户应选择新的 **fotonest-travel** 来源。
+
+## 开发者本地打包
 
 公共目录提交候选包为 `0.1.0-preview.1`；尚未上架，发布后台当前要求先完成开发者身份验证。见[提交状态与流程](docs/plugin-publication.md)和[隐私说明](docs/privacy.md)。
+
+GitHub 分发使用同一打包工具加 `--marketplace-name fotonest-travel`，只把产物中的 `.agents/` 和 `plugins/` 放入分发分支。该分支是生成产物，不在那里手改技能或核对脚本。
 
 开发者可将完整 skill 和首次设置打成一个本地插件：
 

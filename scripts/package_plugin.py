@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Package the canonical skill into a private, offline-loadable local plugin."""
+"""Package the canonical skill for a local or Git-backed desktop marketplace."""
 import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import runpy
 import shutil
 import zipfile
@@ -24,7 +25,9 @@ def write_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
-def package(source, output):
+def package(source, output, marketplace_name='fotonest-travel-private'):
+    if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', marketplace_name) or len(marketplace_name) > 64:
+        raise ValueError('invalid marketplace name')
     source, output = Path(source).resolve(), Path(output).absolute()
     if output.resolve().is_relative_to(source): raise ValueError('output must be outside source')
     if output.exists() or output.is_symlink(): raise FileExistsError('output already exists')
@@ -50,7 +53,8 @@ def package(source, output):
                      for p in sorted(plugin.rglob('*')) if p.is_file()}
         write_json(plugin / 'checksums.json', dict(format='travel-records.plugin.bundle', version=1,
                    plugin_version=manifest['version'], files=checksums))
-        marketplace = dict(name='fotonest-travel-private', interface=dict(displayName='FotoNest Travel · 私有内测'),
+        display_name = 'FotoNest Travel · 私有内测' if marketplace_name == 'fotonest-travel-private' else marketplace_name
+        marketplace = dict(name=marketplace_name, interface=dict(displayName=display_name),
             plugins=[dict(name=manifest['name'], source=dict(source='local', path='./plugins/' + manifest['name']),
                           policy=dict(installation='AVAILABLE', authentication='ON_INSTALL'), category='Productivity')])
         catalog = output / '.agents' / 'plugins' / 'marketplace.json'
@@ -69,9 +73,11 @@ def package(source, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True, type=Path, help='New private directory outside the source tree')
+    parser.add_argument('--marketplace-name', default='fotonest-travel-private',
+                        help='Local/Git catalog identity; does not publish to the OpenAI directory')
     args = parser.parse_args()
     try:
-        result = package(Path(__file__).resolve().parents[1], args.output)
+        result = package(Path(__file__).resolve().parents[1], args.output, args.marketplace_name)
     except (OSError, ValueError, KeyError, TypeError):
         raise SystemExit('INVALID: plugin packaging failed; use a complete source and a new output directory')
     print(json.dumps(result, ensure_ascii=False))

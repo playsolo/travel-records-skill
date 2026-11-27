@@ -30,6 +30,23 @@ class PluginTests(unittest.TestCase):
         result = package_plugin.package(SOURCE, self.root / 'marketplace')
         return Path(result['plugin_root']), result
 
+    def test_git_distribution_catalog_keeps_runtime_identical_to_private_bundle(self):
+        private, _ = self.bundle()
+        result = package_plugin.package(SOURCE, self.root / 'public', 'fotonest-travel')
+        catalog = json.loads(Path(result['marketplace_file']).read_text())
+        self.assertEqual(catalog['name'], 'fotonest-travel')
+        plugin = Path(result['marketplace_root']) / catalog['plugins'][0]['source']['path']
+        self.assertEqual(plugin.resolve(), Path(result['plugin_root']).resolve())
+        self.assertEqual((plugin / 'checksums.json').read_bytes(), (private / 'checksums.json').read_bytes())
+        self.assertNotIn('私有内测', catalog['interface']['displayName'])
+
+    def test_invalid_marketplace_identity_does_not_create_output(self):
+        output = self.root / 'invalid'
+        for name in ['', '../outside', 'Bad Name', 'a' * 65]:
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                package_plugin.package(SOURCE, output, name)
+            self.assertFalse(output.exists())
+
     def test_bundle_relocates_and_runs_without_a_repository_download(self):
         plugin, result = self.bundle()
         relocated = self.root / 'installed'
